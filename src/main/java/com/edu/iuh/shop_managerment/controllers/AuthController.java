@@ -45,8 +45,6 @@ public class AuthController {
     @PostMapping("/introspect")
     public ApiReponse<?> introspect(@RequestBody String token) throws ParseException, JOSEException {
 
-        System.out.print("token: " + token);
-
         boolean introspect = authenticationService.introspect(token);
         if(introspect) {
             return new ApiReponse<>(HttpStatus.OK.value(),"Token valid",

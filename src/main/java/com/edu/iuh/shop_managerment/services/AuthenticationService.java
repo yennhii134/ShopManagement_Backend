@@ -36,8 +36,8 @@ public class AuthenticationService {
     PasswordEncoder passwordEncoder;
     UserRespone userRespone;
     @NonFinal
-//    @Value("${jwt.signerKey}")
-    protected final static String SIGNER_KEY = "AU9hoTlqMf8kZiQFMad+qGhyEvW2ixGuMSx8BR9lE++kORpbf/FlPbSDhfSXTsFW";
+    @Value("${jwt.signerKey}")
+    protected String SIGNER_KEY;
     public boolean checkPassword(String rawPassword, String encodedPassword){
         return passwordEncoder.matches(rawPassword,encodedPassword);
     }
