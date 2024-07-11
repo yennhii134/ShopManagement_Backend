@@ -35,10 +35,14 @@ public class AddressService {
         return addressRepository.findByIdAndUserId(addressId,userId);
     }
     public Address createAddress(String userId,Address address){
-        if(findAllByUserId(userId).isEmpty()){
-            address.setStatus(AddressStatus.MAIN);
+        List<Address> addresses = findAllByUserId(userId);
+
+        if(addresses.size() >= 5) {
+            throw new AppException(ErrorCode.ADDRESS_LIMIT_EXCEEDED);
         }
-        if (address.getStatus() == AddressStatus.MAIN) {
+        if(addresses.isEmpty()){
+            address.setStatus(AddressStatus.MAIN);
+        } else if (address.getStatus() == AddressStatus.MAIN) {
             switchAddressMainToSecond(userId);
         } else {
             address.setStatus(AddressStatus.SECONDARY);
@@ -50,22 +54,23 @@ public class AddressService {
 //    Nếu trạng thái address cần tạo hay cập nhật là MAIN thì chuyển address MAIN trong list sang SECOONDARY trước
     public void switchAddressMainToSecond(String userId){
         List<Address> addresses = findAllByUserId(userId);
-        for(Address address : addresses) {
-            if (address.getStatus().equals(AddressStatus.MAIN)){
-                address.setStatus(AddressStatus.SECONDARY);
-                addressRepository.save(address);
-            }
-        }
+        addresses.stream()
+                .filter(address -> address.getStatus().equals(AddressStatus.MAIN))
+                .forEach(address -> {
+                    address.setStatus(AddressStatus.SECONDARY);
+                    addressRepository.save(address);
+                });
     }
     public void radomDifferentAddressToMain(Address address, String userId){
             List<Address> addresses = findAllByUserId(userId);
-            addresses.removeIf(a -> a.getId().equals(address.getAddress()));
+            addresses.removeIf(a -> a.getId().equals(address.getId()));
 
-            if (!addresses.isEmpty()) {
-                Address randomAddress = addresses.get(0);
-                addresses.get(0).setStatus(AddressStatus.MAIN);
-                addressRepository.save(randomAddress);
-            }
+                addresses.stream()
+                        .findFirst()
+                        .ifPresent(randomAddress -> {
+                            randomAddress.setStatus(AddressStatus.MAIN);
+                            addressRepository.save(randomAddress);
+                        });
     }
     public void checkAddress(String addressId, String userId){
         if(!existsAddressByIdAndUserId(addressId,userId)){

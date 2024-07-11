@@ -1,13 +1,11 @@
 package com.edu.iuh.shop_managerment.services;
 
 import com.edu.iuh.shop_managerment.dto.request.AuthenticationRequest;
-import com.edu.iuh.shop_managerment.dto.respone.ApiReponse;
 import com.edu.iuh.shop_managerment.dto.respone.AuthenticationRespone;
 import com.edu.iuh.shop_managerment.dto.respone.UserRespone;
 import com.edu.iuh.shop_managerment.exception.AppException;
 import com.edu.iuh.shop_managerment.exception.ErrorCode;
 import com.edu.iuh.shop_managerment.models.User;
-import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;

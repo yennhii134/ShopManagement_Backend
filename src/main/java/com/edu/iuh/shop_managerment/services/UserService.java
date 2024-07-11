@@ -37,14 +37,14 @@ public class UserService {
     }
 
     // Mã hoá passord
-    public String encodePassword (String password){
+    private String encodePassword (String password){
         return passwordEncoder.encode(password);
     }
     public User createUser(UserCreationRequest userRequest) {
         if(existsUserByEmail(userRequest.getEmail())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        User user = userMapper.userCreateedtoUser(userRequest);
+        User user = userMapper.userCreatedtoUser(userRequest);
         user.setPassword(encodePassword(userRequest.getPassword()));
         user.setUserRole(UserRole.USER);
 

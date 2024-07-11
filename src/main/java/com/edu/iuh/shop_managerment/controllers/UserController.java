@@ -32,7 +32,7 @@ public class UserController {
         User user = userService.findById(userId);
         return userRespone.getUserRespone(user);
     }
-    @GetMapping("/all")
+    @GetMapping()
     public List<UserRespone> getUsers(){
         return userService.getUsers().stream()
                 .map(userRespone::getUserRespone)
