@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "address_id")
     String id;
     String address;
     @Enumerated(EnumType.STRING)

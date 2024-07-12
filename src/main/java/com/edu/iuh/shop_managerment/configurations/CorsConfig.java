@@ -1,4 +1,4 @@
-package com.edu.iuh.shop_managerment.configs;
+package com.edu.iuh.shop_managerment.configurations;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
