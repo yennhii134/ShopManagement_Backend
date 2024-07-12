@@ -19,11 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +42,11 @@ public class AuthenticationService {
         return passwordEncoder.matches(rawPassword,encodedPassword);
     }
     public AuthenticationRespone authenticate(AuthenticationRequest authenticationRequest){
-        User foundUser = userService.findByEmail(authenticationRequest.getEmail());
+        User foundUser = userService.findByUserName(authenticationRequest.getUserName());
         if(!checkPassword(authenticationRequest.getPassword(),foundUser.getPassword())){
             throw new AppException(ErrorCode.INVALID_PASSWORD);
         }
-        String token = generateToken(authenticationRequest.getEmail(),foundUser.getId());
+        String token = generateToken(foundUser);
 
         return AuthenticationRespone.builder()
                 .userRespone(userRespone.getUserRespone(foundUser))
@@ -53,16 +55,16 @@ public class AuthenticationService {
                 .build();
 
     }
-    private String generateToken(String email, String userId) {
+    private String generateToken(User user) {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(email)
+                .subject(user.getUserName())
                 .issuer("shopBag.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("userId", userId)
+                .claim("scope", user.getUserRole())
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(jwsHeader,payload);
@@ -77,7 +79,7 @@ public class AuthenticationService {
         }
     }
     public boolean introspect(String token) throws JOSEException, ParseException {
-        System.out.printf("token: ",token);
+
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);

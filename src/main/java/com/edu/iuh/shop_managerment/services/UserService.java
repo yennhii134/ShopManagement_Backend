@@ -23,11 +23,11 @@ public class UserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     UserMapper userMapper;
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUNDED));
+    public User findByUserName(String userName) {
+        return userRepository.findByUserName(userName).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUNDED));
     }
-    public boolean existsUserByEmail(String email){
-        return userRepository.existsUserByEmail(email);
+    public boolean existsUserByUserName(String userName){
+        return userRepository.existsUserByUserName(userName);
     }
     public User findById(String userId) {
         return userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUNDED));
@@ -41,7 +41,7 @@ public class UserService {
         return passwordEncoder.encode(password);
     }
     public User createUser(UserCreationRequest userRequest) {
-        if(existsUserByEmail(userRequest.getEmail())){
+        if(existsUserByUserName(userRequest.getUserName())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.userCreatedtoUser(userRequest);

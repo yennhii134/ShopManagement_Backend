@@ -12,7 +12,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    String email;
+    String userName;
     String fullName;
     Gender gender;
     Date dob;

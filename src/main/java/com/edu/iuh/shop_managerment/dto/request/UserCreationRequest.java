@@ -14,7 +14,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    String email;
+    String userName;
     String password;
     String fullName;
     Gender gender;

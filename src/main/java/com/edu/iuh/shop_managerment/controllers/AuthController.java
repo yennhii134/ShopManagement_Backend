@@ -33,25 +33,29 @@ public class AuthController {
 
         User userCreated = userService.createUser(userCreationRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiReponse<>(HttpStatus.CREATED.value(),"Registered successfully",
-                        userRespone.getUserRespone(userCreated)));
+                .body(ApiReponse.<UserRespone>builder()
+                        .status(HttpStatus.CREATED.value())
+                        .message("Registered successfully")
+                        .data(userRespone.getUserRespone(userCreated))
+                        .build());
     }
     @PostMapping("/login")
     public ApiReponse<AuthenticationRespone> login(@RequestBody AuthenticationRequest authenticationRequest){
         AuthenticationRespone authenticationRespone = authenticationService.authenticate(authenticationRequest);
-        return new ApiReponse<>(HttpStatus.OK.value(),"Login successfully",
-                        authenticationRespone);
+        return ApiReponse.<AuthenticationRespone>builder()
+                .status(HttpStatus.OK.value())
+                .message("Login successfully")
+                .data(authenticationRespone)
+                .build();
     }
     @PostMapping("/introspect")
     public ApiReponse<?> introspect(@RequestBody String token) throws ParseException, JOSEException {
 
         boolean introspect = authenticationService.introspect(token);
         if(introspect) {
-            return new ApiReponse<>(HttpStatus.OK.value(),"Token valid",
-                    introspect);
+            return ApiReponse.builder().status(HttpStatus.OK.value()).message("Token valid").data(true).build();
         }
-        return new ApiReponse<>(HttpStatus.OK.value(),"Token invalid",
-                null);
+        return ApiReponse.builder().status(HttpStatus.OK.value()).message("Token invalid").data(false).build();
 
     }
 }
