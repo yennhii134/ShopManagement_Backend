@@ -4,20 +4,22 @@ import com.edu.iuh.shop_managerment.enums.user.AddressStatus;
 import com.edu.iuh.shop_managerment.exception.AppException;
 import com.edu.iuh.shop_managerment.exception.ErrorCode;
 import com.edu.iuh.shop_managerment.models.Address;
+import com.edu.iuh.shop_managerment.models.User;
 import com.edu.iuh.shop_managerment.repositories.AddressRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AddressService {
-    @Autowired
-    private AddressRepository addressRepository;
+    AddressRepository addressRepository;
     public Optional<Address> findById(String addressId){
         return Optional.ofNullable(addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUNDED)));
@@ -27,6 +29,9 @@ public class AddressService {
     }
     public boolean existsAddressByIdAndUserId(String addresdId, String userId){
         return addressRepository.existsAddressByIdAndUserId(addresdId,userId);
+    }
+    public Optional<Address> findByStatusAndUserId(AddressStatus status,String userId){
+        return addressRepository.findByStatusAndUserId(status,userId);
     }
     public List<Address> findAllByUserId(String userId){
         return addressRepository.findAllByUserId(userId);
@@ -74,7 +79,7 @@ public class AddressService {
     }
     public void checkAddress(String addressId, String userId){
         if(!existsAddressByIdAndUserId(addressId,userId)){
-            throw new AppException(ErrorCode.ADDRESS_NOT_FOUNDED_BY_USER);
+            throw new AppException(ErrorCode.ADDRESS_NOT_FOUNDED);
         }
         if(!existsAddressById(addressId)){
             throw new AppException(ErrorCode.ADDRESS_NOT_FOUNDED);

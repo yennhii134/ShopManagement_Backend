@@ -1,15 +1,17 @@
 package com.edu.iuh.shop_managerment.controllers;
 
 import com.edu.iuh.shop_managerment.dto.request.AuthenticationRequest;
+import com.edu.iuh.shop_managerment.dto.request.TokenRequest;
 import com.edu.iuh.shop_managerment.dto.request.UserCreationRequest;
 import com.edu.iuh.shop_managerment.dto.respone.AuthenticationRespone;
+import com.edu.iuh.shop_managerment.dto.respone.TokenRespone;
 import com.edu.iuh.shop_managerment.dto.respone.UserRespone;
-import com.edu.iuh.shop_managerment.mappers.UserMapper;
 import com.edu.iuh.shop_managerment.models.User;
-import com.edu.iuh.shop_managerment.dto.respone.ApiReponse;
+import com.edu.iuh.shop_managerment.dto.respone.ApiResponse;
 import com.edu.iuh.shop_managerment.services.AuthenticationService;
 import com.edu.iuh.shop_managerment.services.UserService;
 import com.nimbusds.jose.JOSEException;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,33 +31,40 @@ public class AuthController {
     AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiReponse<UserRespone>> register(@RequestBody UserCreationRequest userCreationRequest){
+    public ResponseEntity<ApiResponse<UserRespone>> register(@RequestBody @Valid UserCreationRequest userCreationRequest){
 
         User userCreated = userService.createUser(userCreationRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiReponse.<UserRespone>builder()
+                .body(ApiResponse.<UserRespone>builder()
                         .status(HttpStatus.CREATED.value())
-                        .message("Registered successfully")
+                        .message("Register successfully")
                         .data(userRespone.getUserRespone(userCreated))
                         .build());
     }
     @PostMapping("/login")
-    public ApiReponse<AuthenticationRespone> login(@RequestBody AuthenticationRequest authenticationRequest){
+    public ApiResponse<AuthenticationRespone> login(@RequestBody AuthenticationRequest authenticationRequest){
         AuthenticationRespone authenticationRespone = authenticationService.authenticate(authenticationRequest);
-        return ApiReponse.<AuthenticationRespone>builder()
+        return ApiResponse.<AuthenticationRespone>builder()
                 .status(HttpStatus.OK.value())
                 .message("Login successfully")
                 .data(authenticationRespone)
                 .build();
     }
     @PostMapping("/introspect")
-    public ApiReponse<?> introspect(@RequestBody String token) throws ParseException, JOSEException {
+    public ApiResponse<TokenRespone> introspect(@RequestBody TokenRequest token) throws ParseException, JOSEException {
 
-        boolean introspect = authenticationService.introspect(token);
-        if(introspect) {
-            return ApiReponse.builder().status(HttpStatus.OK.value()).message("Token valid").data(true).build();
-        }
-        return ApiReponse.builder().status(HttpStatus.OK.value()).message("Token invalid").data(false).build();
-
+        TokenRespone introspect = authenticationService.introspect(token);
+        return ApiResponse.<TokenRespone>builder()
+                .status(HttpStatus.OK.value())
+                .data(introspect)
+                .build();
+    }
+    @PostMapping("/logout")
+    public ApiResponse<String> logout(@RequestBody TokenRequest token) throws ParseException, JOSEException {
+        authenticationService.logout(token);
+        return ApiResponse.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("Logout successfully")
+                .build();
     }
 }

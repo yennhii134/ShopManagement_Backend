@@ -1,9 +1,8 @@
 package com.edu.iuh.shop_managerment.controllers;
 
 import com.edu.iuh.shop_managerment.dto.request.UserUpdateRequest;
-import com.edu.iuh.shop_managerment.dto.respone.ApiReponse;
+import com.edu.iuh.shop_managerment.dto.respone.ApiResponse;
 import com.edu.iuh.shop_managerment.dto.respone.UserRespone;
-import com.edu.iuh.shop_managerment.mappers.UserMapper;
 import com.edu.iuh.shop_managerment.models.Address;
 import com.edu.iuh.shop_managerment.models.User;
 import com.edu.iuh.shop_managerment.services.AddressService;
@@ -11,10 +10,8 @@ import com.edu.iuh.shop_managerment.services.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,85 +21,85 @@ import java.util.stream.Collectors;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Slf4j
 public class UserController {
     UserService userService;
     AddressService addressService;
     UserRespone userRespone;
 
-    @GetMapping("/{userId}")
-    public UserRespone getUser(@PathVariable("userId") String userId){
-        User user = userService.findById(userId);
-        return userRespone.getUserRespone(user);
-    }
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserRespone> getUsers(){
-        var authentication= SecurityContextHolder.getContext().getAuthentication();
-        log.info("User name: {}",authentication.getName());
-        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
 
         return userService.getUsers().stream()
                 .map(userRespone::getUserRespone)
                 .collect(Collectors.toList());
     }
-
-    @PutMapping("/{userId}/profile")
-    public ApiReponse<UserRespone> updateUserProfile(@PathVariable("userId") String userId, @RequestBody UserUpdateRequest userUpdateRequest){
-
-        User userUpdate = userService.updateUserProfile(userId,userUpdateRequest);
-        return ApiReponse.<UserRespone>builder()
+    @GetMapping("/myInfo")
+    public ApiResponse<UserRespone> getMyInfo(){
+        return ApiResponse.<UserRespone>builder()
                 .status(HttpStatus.OK.value())
-                .message("Updated user successfully")
+                .message("Get my info successfully")
+                .data(userService.getMyInfo())
+                .build();
+    }
+
+    @PutMapping("/profile")
+    public ApiResponse<UserRespone> updateUserProfile(@RequestBody UserUpdateRequest userUpdateRequest){
+
+        User userUpdate = userService.updateUserProfile(userUpdateRequest);
+        return ApiResponse.<UserRespone>builder()
+                .status(HttpStatus.OK.value())
+                .message("Update profile successfully")
                 .data(userRespone.getUserRespone(userUpdate))
                 .build();
     }
-    @GetMapping("/{userId}/address/{addressId}")
-    public Address getAddress(@PathVariable("userId") String userId,@PathVariable("addressId") String addressId){
-        userService.findById(userId);
-        return addressService.findByIdAndUserId(addressId,userId);
+    @GetMapping("/address/{addressId}")
+    public Address getAddress(@PathVariable("addressId") String addressId){
+        User user = userService.getCurrentUser();
+        return addressService.findByIdAndUserId(addressId,user.getId());
     }
-    @GetMapping("/{userId}/address")
-    public List<Address> getAddresses(@PathVariable("userId") String userId){
-        userService.findById(userId);
-        return addressService.findAllByUserId(userId);
-    }
-    @PostMapping("/{userId}/address")
-    public ApiReponse<Address> createAddress(@PathVariable("userId") String userId, @RequestBody Address address){
-        userService.findById(userId);
-        Address addressCreated = addressService.createAddress(userId,address);
-        return ApiReponse.<Address>builder()
+    @GetMapping("/addresses")
+    public ApiResponse<List<Address>> getAddresses(){
+        User user = userService.getCurrentUser();
+        List<Address> addresses = addressService.findAllByUserId(user.getId());
+        String message = addresses.isEmpty() ? "Address empty" : "Get addresses successfully";
+        return ApiResponse.<List<Address>>builder()
                 .status(HttpStatus.OK.value())
-                .message("Created address successfully")
+                .message(message)
+                .data(addresses)
+                .build();
+    }
+    @PostMapping("/address")
+    public ApiResponse<Address> createAddress(@RequestBody Address address){
+        User user = userService.getCurrentUser();
+        Address addressCreated = addressService.createAddress(user.getId(),address);
+        return ApiResponse.<Address>builder()
+                .status(HttpStatus.OK.value())
+                .message("Create address successfully")
                 .data(addressCreated)
                 .build();
     }
-    @PutMapping("/{userId}/address/{addressId}")
-    public ApiReponse<Address> updateUserAddress(@PathVariable("userId") String userId,@PathVariable("addressId") String addressId,
-                                           @RequestBody Address address){
-        userService.findById(userId);
+    @PutMapping("/address/{addressId}")
+    public ApiResponse<Address> updateUserAddress(@PathVariable("addressId") String addressId,
+                                                  @RequestBody Address address){
+        User user = userService.getCurrentUser();
 
-        Address adddressUpdated = addressService.updateAddress(userId,addressId,address);
-        return ApiReponse.<Address>builder()
+        Address adddressUpdated = addressService.updateAddress(user.getId(), addressId,address);
+        return ApiResponse.<Address>builder()
                 .status(HttpStatus.OK.value())
-                .message("Updated address successfully")
+                .message("Update address successfully")
                 .data(adddressUpdated)
                 .build();
     }
-    @DeleteMapping("/{userId}/address/{addressId}")
-     public ApiReponse<?> deleteUserAddress(@PathVariable("userId") String userId,@PathVariable("addressId") String addressId){
-        userService.findById(userId);
+    @DeleteMapping("/address/{addressId}")
+     public ApiResponse<?> deleteUserAddress(@PathVariable("addressId") String addressId) {
+        User user = userService.getCurrentUser();
 
-        boolean isDeleted = addressService.deleteAddress(userId,addressId);
-        if(isDeleted) {
-            return ApiReponse.builder()
-                    .status(HttpStatus.OK.value())
-                    .message("Deleted address successfully")
-                    .data(null)
-                    .build();
-        }
-        return ApiReponse.builder()
+        boolean isDeleted = addressService.deleteAddress(user.getId(), addressId);
+        String message = isDeleted ? "Deleted address successfully" : "Deleted address fail";
+        return ApiResponse.builder()
                 .status(HttpStatus.OK.value())
-                .message("Deleted address fail")
+                .message(message)
                 .data(null)
                 .build();
     }

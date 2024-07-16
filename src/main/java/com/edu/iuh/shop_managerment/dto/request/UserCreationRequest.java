@@ -1,8 +1,6 @@
 package com.edu.iuh.shop_managerment.dto.request;
 
 import com.edu.iuh.shop_managerment.enums.user.Gender;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

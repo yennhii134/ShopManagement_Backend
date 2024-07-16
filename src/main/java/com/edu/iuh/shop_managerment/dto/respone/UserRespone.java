@@ -22,7 +22,6 @@ public class UserRespone {
     String fullName;
     Gender gender;
     Date dob;
-    UserRole userRole;
     List<Address> addresses;
 
     public UserRespone getUserRespone(User user) {
@@ -33,7 +32,6 @@ public class UserRespone {
                 .gender(user.getGender())
                 .dob(user.getDob())
                 .addresses(user.getAddresses())
-                .userRole(user.getUserRole())
                 .build();
     }
 }
