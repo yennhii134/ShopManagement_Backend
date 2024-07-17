@@ -1,25 +1,28 @@
 package com.edu.iuh.shop_managerment.controllers;
 
-import com.edu.iuh.shop_managerment.dto.request.AuthenticationRequest;
-import com.edu.iuh.shop_managerment.dto.request.TokenRequest;
-import com.edu.iuh.shop_managerment.dto.request.UserCreationRequest;
-import com.edu.iuh.shop_managerment.dto.respone.AuthenticationRespone;
-import com.edu.iuh.shop_managerment.dto.respone.TokenRespone;
-import com.edu.iuh.shop_managerment.dto.respone.UserRespone;
-import com.edu.iuh.shop_managerment.models.User;
-import com.edu.iuh.shop_managerment.dto.respone.ApiResponse;
-import com.edu.iuh.shop_managerment.services.AuthenticationService;
-import com.edu.iuh.shop_managerment.services.UserService;
-import com.nimbusds.jose.JOSEException;
+import java.text.ParseException;
+
 import jakarta.validation.Valid;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
+import com.edu.iuh.shop_managerment.dto.request.AuthenticationRequest;
+import com.edu.iuh.shop_managerment.dto.request.TokenRequest;
+import com.edu.iuh.shop_managerment.dto.request.UserCreationRequest;
+import com.edu.iuh.shop_managerment.dto.respone.ApiResponse;
+import com.edu.iuh.shop_managerment.dto.respone.AuthenticationRespone;
+import com.edu.iuh.shop_managerment.dto.respone.TokenRespone;
+import com.edu.iuh.shop_managerment.dto.respone.UserRespone;
+import com.edu.iuh.shop_managerment.models.User;
+import com.edu.iuh.shop_managerment.services.AuthenticationService;
+import com.edu.iuh.shop_managerment.services.UserService;
+import com.nimbusds.jose.JOSEException;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,7 +34,8 @@ public class AuthController {
     AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserRespone>> register(@RequestBody @Valid UserCreationRequest userCreationRequest){
+    public ResponseEntity<ApiResponse<UserRespone>> register(
+            @RequestBody @Valid UserCreationRequest userCreationRequest) {
 
         User userCreated = userService.createUser(userCreationRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -41,8 +45,9 @@ public class AuthController {
                         .data(userRespone.getUserRespone(userCreated))
                         .build());
     }
+
     @PostMapping("/login")
-    public ApiResponse<AuthenticationRespone> login(@RequestBody AuthenticationRequest authenticationRequest){
+    public ApiResponse<AuthenticationRespone> login(@RequestBody AuthenticationRequest authenticationRequest) {
         AuthenticationRespone authenticationRespone = authenticationService.authenticate(authenticationRequest);
         return ApiResponse.<AuthenticationRespone>builder()
                 .status(HttpStatus.OK.value())
@@ -50,6 +55,7 @@ public class AuthController {
                 .data(authenticationRespone)
                 .build();
     }
+
     @PostMapping("/introspect")
     public ApiResponse<TokenRespone> introspect(@RequestBody TokenRequest token) throws ParseException, JOSEException {
 
@@ -59,12 +65,22 @@ public class AuthController {
                 .data(introspect)
                 .build();
     }
+
     @PostMapping("/logout")
     public ApiResponse<String> logout(@RequestBody TokenRequest token) throws ParseException, JOSEException {
         authenticationService.logout(token);
         return ApiResponse.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message("Logout successfully")
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<TokenRespone> refresh(@RequestBody TokenRequest token) throws ParseException, JOSEException {
+        TokenRespone refresh = authenticationService.refreshToken(token);
+        return ApiResponse.<TokenRespone>builder()
+                .status(HttpStatus.OK.value())
+                .data(refresh)
                 .build();
     }
 }
