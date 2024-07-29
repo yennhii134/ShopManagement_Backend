@@ -65,7 +65,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationRespone authenticate(AuthenticationRequest authenticationRequest) throws ParseException, JOSEException {
-        Optional<User> foundUser = userRepository.findByUserName(authenticationRequest.getUserName());
+        Optional<User> foundUser = userRepository.findByEmail(authenticationRequest.getEmail());
         if (foundUser.isEmpty()) {
             throw new AppException(ErrorCode.USER_NOT_FOUNDED);
         }
@@ -123,7 +123,6 @@ public class AuthenticationService {
     private SignedJWT verifyToken(TokenRequest tokenRequest) throws ParseException, JOSEException {
         boolean isRefresh = tokenRequest.isRefresh();
         String token = tokenRequest.getToken();
-        log.info("isRefresh hihihi: " + isRefresh);
 
         JWSVerifier jwsVerifier = isRefresh ? new MACVerifier(SIGNER_KEY_REFRESH.getBytes())
                 : new MACVerifier(SIGNER_KEY.getBytes());
@@ -138,8 +137,6 @@ public class AuthenticationService {
                 .toEpochMilli());
 
         var verified = signedJWT.verify(jwsVerifier);
-        log.info("Token is verified: " + verified);
-        log.info("Token is expired: " + expiryTime.after(new Date()));
         if (!(verified && expiryTime.after(new Date()))) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }

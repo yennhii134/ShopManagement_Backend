@@ -1,8 +1,10 @@
 package com.edu.iuh.shop_managerment.controllers;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
+import com.edu.iuh.shop_managerment.services.GoogleUserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,7 @@ import lombok.experimental.FieldDefaults;
 public class AuthController {
     UserService userService;
     AuthenticationService authenticationService;
+    GoogleUserInfoService googleUserInfoService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserRespone>> register(@RequestBody UserCreationRequest userCreationRequest) {
@@ -83,15 +86,25 @@ public class AuthController {
                 .build();
     }
 
-    @PostMapping("/check-username")
-    public ApiResponse<Boolean> checkUserName(@RequestBody Map<String, String> request) {
-        String userName = request.get("userName");
-        boolean existsUserByUserName = userService.existsUserByUserName(userName);
-        String message = existsUserByUserName ? "User name is exists" : "User name is not exists";
+    @PostMapping("/check-email")
+    public ApiResponse<Boolean> checkEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        boolean respone = userService.existsUserByEmail(email);
+        String message = respone ? "Email is exists" : "Email is not exists";
         return ApiResponse.<Boolean>builder()
                 .status(HttpStatus.OK.value())
                 .message(message)
-                .data(existsUserByUserName)
+                .data(respone)
                 .build();
+    }
+    @PostMapping("/google-login")
+    public String handleGoogleLogin(@RequestBody TokenRequest tokenRequest) {
+        try {
+            String userInfo = googleUserInfoService.getUserInfoFromGoogle(tokenRequest.getToken());
+            return userInfo;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Error fetching user info";
     }
 }

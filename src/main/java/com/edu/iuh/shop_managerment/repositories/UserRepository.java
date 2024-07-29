@@ -10,9 +10,9 @@ import com.edu.iuh.shop_managerment.models.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
-    Optional<User> findByUserName(String userName);
+    Optional<User> findByEmail(String email);
 
-    boolean existsUserByUserName(String userName);
+    boolean existsUserByEmail(String email);
 
     Optional<User> findById(String id);
 }

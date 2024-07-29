@@ -28,9 +28,9 @@ public class ApplicationInitConfig {
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
-            if (!userRepository.existsUserByUserName("admin")) {
+            if (!userRepository.existsUserByEmail("admin")) {
                 User user = User.builder()
-                        .userName("admin")
+                        .email("admin")
                         .fullName("admin")
                         .password(passwordEncoder.encode("admin"))
                         .gender(Gender.FEMALE)

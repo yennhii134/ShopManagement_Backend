@@ -8,7 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Date;
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor

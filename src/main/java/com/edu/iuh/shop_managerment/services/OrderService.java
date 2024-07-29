@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,11 +35,10 @@ public class OrderService {
     EmailService emailService;
 
     public OrderAndOrderItemRespone addOrder(OrderAndOrderItemRequest orderAndOrderItemRequest) throws MessagingException {
-        log.info("OrderAndOrderItemRequest: {}", orderAndOrderItemRequest);
         User user = userService.getCurrentUser();
         Order order = orderMapper.orderResponeToOrder(orderAndOrderItemRequest.getOrderRequest());
         order.setUserId(user.getId());
-        order.setOrderDate(new Date(System.currentTimeMillis()));
+        order.setOrderDate(new Timestamp(System.currentTimeMillis()));
         order.setOrderStatus(Status.CREATED);
         orderRepository.save(order);
 
@@ -57,7 +57,7 @@ public class OrderService {
         order.setOrderItems(orderAndOrderItemRequest.getOrderItemRequests()
                 .stream().map(orderMapper::orderItemRequestToOrderItem).collect(Collectors.toList()));
 
-        emailService.sendPaymentConfirmationEmail(user.getUserName(), user.getFullName(), order.getOrderTotal());
+        emailService.sendPaymentConfirmationEmail(user.getEmail(), user.getFullName(), order.getOrderTotal());
 
         return generateOrder(order);
     }
@@ -67,7 +67,7 @@ public class OrderService {
         return generateOrder(order);
     }
     public List<OrderAndOrderItemRespone> getOrders() {
-        return orderRepository.findAll().stream().map(this::generateOrder).collect(Collectors.toList());
+        return orderRepository.findAllByOrderByOrderDateDesc().stream().map(this::generateOrder).collect(Collectors.toList());
     }
     public OrderAndOrderItemRespone generateOrder(Order order) {
         return order == null ? null : OrderAndOrderItemRespone.builder()

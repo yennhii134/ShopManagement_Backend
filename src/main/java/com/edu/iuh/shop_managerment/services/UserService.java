@@ -36,12 +36,12 @@ public class UserService {
     AddressService addressService;
     UserRespone userRespone;
 
-    public User findByUserName(String userName) {
-        return userRepository.findByUserName(userName).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUNDED));
+    public User findByEmail(String userName) {
+        return userRepository.findByEmail(userName).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUNDED));
     }
 
-    public boolean existsUserByUserName(String userName) {
-        return userRepository.existsUserByUserName(userName);
+    public boolean existsUserByEmail(String email) {
+        return userRepository.existsUserByEmail(email);
     }
 
     public User findById(String userId) {

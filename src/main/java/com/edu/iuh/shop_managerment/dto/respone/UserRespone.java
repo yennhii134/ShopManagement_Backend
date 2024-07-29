@@ -20,7 +20,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRespone {
     String id;
-    String userName;
+    String email;
     String fullName;
     Gender gender;
     Date dob;
@@ -29,7 +29,7 @@ public class UserRespone {
     public UserRespone getUserRespone(User user) {
         return UserRespone.builder()
                 .id(user.getId())
-                .userName(user.getUserName())
+                .email(user.getEmail())
                 .fullName(user.getFullName())
                 .gender(user.getGender())
                 .dob(user.getDob())

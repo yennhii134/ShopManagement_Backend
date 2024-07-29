@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Date;
+import java.util.Date;
+
 
 @Entity
 @Data
@@ -19,7 +20,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "cart_id")
     String id;
-    @Temporal(TemporalType.DATE)
+    @Column(name = "date")
     Date date;
     @Column(name = "product_id")
     String productId;

@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class CartService {
             cart.setProductColor(cartRequest.getProductColor());
             cart.setQuantity(cart.getQuantity() + cartRequest.getQuantity());
             cart.setTotalPrice(cart.getTotalPrice() + cartRequest.getTotalPrice());
-            cart.setDate(new Date(System.currentTimeMillis()));
+            cart.setDate(new Timestamp(System.currentTimeMillis()));
             cartRespository.save(cart);
             return cartMapper.cartToCartRespone(cart);
         }
@@ -57,7 +58,7 @@ public class CartService {
                 .quantity(cartRequest.getQuantity())
                 .totalPrice(cartRequest.getTotalPrice())
                 .productColor(cartRequest.getProductColor())
-                .date(new Date(System.currentTimeMillis()))
+                .date(new Timestamp(System.currentTimeMillis()))
                 .userId(user.getId())
                 .build();
         cartRespository.save(cartCreate);
@@ -67,7 +68,7 @@ public class CartService {
     public CartRespone updateCart(CartRequest cartRequest) {
         Cart cart = getCartById(cartRequest.getId());
         cart.setQuantity(cartRequest.getQuantity());
-        cart.setDate(new Date(System.currentTimeMillis()));
+        cart.setDate(new Timestamp(System.currentTimeMillis()));
         cart.setProductColor(cartRequest.getProductColor());
         cart.setTotalPrice(cartRequest.getTotalPrice());
         cartRespository.save(cart);
@@ -75,7 +76,7 @@ public class CartService {
     }
 
     public List<CartRespone> getCarts() {
-        List<Cart> carts = cartRespository.findAll();
+        List<Cart> carts = cartRespository.findAllByOrderByDateDesc();
         return carts.stream().map(cart -> {
             Product product = productRepository.findById(cart.getProductId())
                     .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUNDED));
