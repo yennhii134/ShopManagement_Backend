@@ -1,13 +1,12 @@
 package com.edu.iuh.shop_managerment.models;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Entity
 @Data
@@ -18,5 +17,6 @@ import java.util.Date;
 public class InvalidatedToken {
     @Id
     String id;
+
     Date expriryDate;
 }

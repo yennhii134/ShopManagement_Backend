@@ -1,16 +1,19 @@
 package com.edu.iuh.shop_managerment.dto.respone;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
 @Component
-@AllArgsConstructor  @NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationRespone {
     UserRespone userRespone;
-    String token;
+    String accessToken;
+    String refreshToken;
     boolean authentication;
 }

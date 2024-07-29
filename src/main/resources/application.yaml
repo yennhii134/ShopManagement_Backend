@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3307/Shop_Management?createDatabaseIfNotExist=true"
+    username: root
+    password: sapassword
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "yennhi13402@gmail.com"
+    password: "jiug otuh jmec boph"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connection timeout: 5000
+          timeout: 5000
+          write timeout: 5000
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+jwt:
+  signerKey: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MjIwMTczMzIsImV4cCI6MTc1MzU1MzMzMiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.VVH5avKbOP0wy_N_WQFwiDi5mam6Iwv2wrq3jpascWSBO12BscJQC4HHJGGJ0u8pCfQAwJnV-08GrihNTJYeGg"
+  signerKeyRefresh: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE3MjIwMTczMzIsImV4cCI6MTc1MzU1MzMzMiwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.3_BRELbcX_QAcKCoZqqCbeGq11s9sNLLOVRMMYD6Y8rc6TSpbjAf7vpp-1EYa7ur68pDf-JNiIVjj9NIBU7ndg"
+  expiration: 43200 # 12 hours
+  refresh-expiration: 172800 # 2 days
+
+
+
+
+
+#43200 # 12 hours
+#86400 # 24 hours

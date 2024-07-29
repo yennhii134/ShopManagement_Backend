@@ -11,6 +11,7 @@ import lombok.Data;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TokenRespone {
-    String token;
+    String accessToken;
+    String refreshToken;
     boolean validToken;
 }
