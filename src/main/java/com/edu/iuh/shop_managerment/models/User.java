@@ -36,6 +36,8 @@ public class User {
     Gender gender;
     @Temporal(TemporalType.DATE)
     Date dob;
+    @Column(name = "facebook_id")
+    String facebookId;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
     List<Address> addresses;
 }

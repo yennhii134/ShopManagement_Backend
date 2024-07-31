@@ -21,7 +21,7 @@ public class OrderController {
     public ApiResponse<Object> addOrder(@RequestBody OrderAndOrderItemRequest orderAndOrderItemRequest) throws MessagingException {
         OrderAndOrderItemRespone respone = orderService.addOrder(orderAndOrderItemRequest);
         return ApiResponse.builder()
-                .status(200)
+                .code(200)
                 .message("Add order successfully")
                 .data(respone)
                 .build();
@@ -30,7 +30,7 @@ public class OrderController {
     public ApiResponse<Object> getOrder(@PathVariable String id) {
         OrderAndOrderItemRespone respone = orderService.getOrder(id);
         return ApiResponse.builder()
-                .status(200)
+                .code(200)
                 .message("Get order successfully")
                 .data(respone)
                 .build();
@@ -38,7 +38,7 @@ public class OrderController {
     @GetMapping
     public ApiResponse<Object> getAllOrder() {
         return ApiResponse.builder()
-                .status(200)
+                .code(200)
                 .message("Get all order successfully")
                 .data(orderService.getOrders())
                 .build();

@@ -37,7 +37,7 @@ public class UserController {
     @GetMapping("/myInfo")
     public ApiResponse<UserRespone> getMyInfo() {
         return ApiResponse.<UserRespone>builder()
-                .status(HttpStatus.OK.value())
+                .code(HttpStatus.OK.value())
                 .message("Get my info successfully")
                 .data(userService.getMyInfo())
                 .build();
@@ -48,7 +48,7 @@ public class UserController {
 
         User userUpdate = userService.updateUserProfile(userUpdateRequest);
         return ApiResponse.<UserRespone>builder()
-                .status(HttpStatus.OK.value())
+                .code(HttpStatus.OK.value())
                 .message("Update profile successfully")
                 .data(userRespone.getUserRespone(userUpdate))
                 .build();
@@ -66,7 +66,7 @@ public class UserController {
         List<Address> addresses = addressService.findAllByUserId(user.getId());
         String message = addresses.isEmpty() ? "Address empty" : "Get addresses successfully";
         return ApiResponse.<List<Address>>builder()
-                .status(HttpStatus.OK.value())
+                .code(HttpStatus.OK.value())
                 .message(message)
                 .data(addresses)
                 .build();
@@ -77,7 +77,7 @@ public class UserController {
         User user = userService.getCurrentUser();
         Address addressCreated = addressService.createAddress(user.getId(), address);
         return ApiResponse.<Address>builder()
-                .status(HttpStatus.OK.value())
+                .code(HttpStatus.OK.value())
                 .message("Create address successfully")
                 .data(addressCreated)
                 .build();
@@ -90,7 +90,7 @@ public class UserController {
 
         Address adddressUpdated = addressService.updateAddress(user.getId(), addressId, address);
         return ApiResponse.<Address>builder()
-                .status(HttpStatus.OK.value())
+                .code(HttpStatus.OK.value())
                 .message("Update address successfully")
                 .data(adddressUpdated)
                 .build();
@@ -103,7 +103,7 @@ public class UserController {
         boolean isDeleted = addressService.deleteAddress(user.getId(), addressId);
         String message = isDeleted ? "Deleted address successfully" : "Deleted address fail";
         return ApiResponse.builder()
-                .status(HttpStatus.OK.value())
+                .code(HttpStatus.OK.value())
                 .message(message)
                 .data(null)
                 .build();

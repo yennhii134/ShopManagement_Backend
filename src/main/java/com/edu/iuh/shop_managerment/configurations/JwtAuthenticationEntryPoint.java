@@ -21,11 +21,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
         ErrorCode errorCode = ErrorCode.UNAUTHENTICATED;
-        response.setStatus(errorCode.getStatus());
+        response.setStatus(errorCode.getCode());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         ApiResponse<?> apiReponse = ApiResponse.builder()
-                .status(errorCode.getStatus())
+                .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .data(null)
                 .build();

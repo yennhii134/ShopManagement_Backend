@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +32,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     UserMapper userMapper;
@@ -80,19 +83,24 @@ public class UserService {
         user.setPassword(encodePassword(userRequest.getPassword()));
         user.setUserRole(UserRole.USER);
 
-        try {
+        if (user.getEmail() != null) {
+            try {
+                userRepository.save(user);
+            } catch (DataIntegrityViolationException e) {
+                throw new AppException(ErrorCode.USER_EXISTED);
+            }
+        } else {
             userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new AppException(ErrorCode.USER_EXISTED);
         }
         return userRespone.getUserRespone(user);
-    }
+}
 
-    public User updateUserProfile(UserUpdateRequest userUpdateRequest) {
-        User userUpdate = getCurrentUser();
+public User updateUserProfile(UserUpdateRequest userUpdateRequest) {
+    User userUpdate = getCurrentUser();
 
-        userMapper.updateUser(userUpdate, userUpdateRequest);
+    userMapper.updateUser(userUpdate, userUpdateRequest);
 
-        return userRepository.save(userUpdate);
-    }
+    return userRepository.save(userUpdate);
+}
+
 }

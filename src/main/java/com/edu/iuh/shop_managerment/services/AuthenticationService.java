@@ -65,7 +65,14 @@ public class AuthenticationService {
     }
 
     public AuthenticationRespone authenticate(AuthenticationRequest authenticationRequest) throws ParseException, JOSEException {
-        Optional<User> foundUser = userRepository.findByEmail(authenticationRequest.getEmail());
+       Optional<User> foundUser;
+
+        if(authenticationRequest.getEmail() != null) {
+            foundUser = userRepository.findByEmail(authenticationRequest.getEmail());
+        } else {
+            foundUser = userRepository.findByFacebookId(authenticationRequest.getFacebookId());
+        }
+
         if (foundUser.isEmpty()) {
             throw new AppException(ErrorCode.USER_NOT_FOUNDED);
         }

@@ -26,7 +26,7 @@ public class CartController {
     public ApiResponse<CartRespone> addProductToCart(@RequestBody  CartRequest cartRequest) {
         CartRespone cartRespone = cartService.addProductToCart(cartRequest);
         return ApiResponse.<CartRespone>builder()
-                .status(200)
+                .code(200)
                 .message("Add product to cart successfully")
                 .data(cartRespone)
                 .build();
@@ -35,7 +35,7 @@ public class CartController {
     public ApiResponse<CartRespone> updateCart(@RequestBody CartRequest cartRequest) {
         CartRespone cartRespone = cartService.updateCart(cartRequest);
         return ApiResponse.<CartRespone>builder()
-                .status(200)
+                .code(200)
                 .message("Update cart successfully")
                 .data(cartRespone)
                 .build();
@@ -44,7 +44,7 @@ public class CartController {
     public ApiResponse<String> deleteCart(@PathVariable String id) {
         cartService.deleteCart(id);
         return ApiResponse.<String>builder()
-                .status(200)
+                .code(200)
                 .message("Delete cart successfully")
                 .build();
     }

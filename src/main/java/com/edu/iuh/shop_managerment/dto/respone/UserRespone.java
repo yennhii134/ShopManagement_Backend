@@ -24,6 +24,7 @@ public class UserRespone {
     String fullName;
     Gender gender;
     Date dob;
+    String facebookId;
     List<Address> addresses;
 
     public UserRespone getUserRespone(User user) {
@@ -33,6 +34,7 @@ public class UserRespone {
                 .fullName(user.getFullName())
                 .gender(user.getGender())
                 .dob(user.getDob())
+                .facebookId(user.getFacebookId())
                 .addresses(user.getAddresses())
                 .build();
     }
